@@ -1,0 +1,71 @@
+---
+
+- name: Software | Cleanup | Remove bloatware
+  win_package:
+    product_id: "{{ item.name | default(item) }}"
+    state: absent
+  with_items:
+    - Microsoft.AppConnector
+    - Microsoft.BingFinance
+    - Microsoft.BingNews
+    - Microsoft.BingSports
+    - Microsoft.BingTranslator
+    - Microsoft.BingWeather
+    - Microsoft.BingFoodAndDrink
+    - Microsoft.BingHealthAndFitness
+    - Microsoft.BingTravel
+    - Microsoft.MinecraftUWP
+    - Microsoft.GamingServices
+    - Microsoft.GamingApp
+    - Microsoft.GetHelp
+    - Microsoft.Getstarted
+    - Microsoft.Messaging
+    - Microsoft.Microsoft3DViewer
+    - Microsoft.MicrosoftOfficeHub
+    - Microsoft.MicrosoftSolitaireCollection
+    - Microsoft.NetworkSpeedTest
+    - Microsoft.News
+    - Microsoft.Office.Lens
+    - Microsoft.Office.Sway
+    - Microsoft.MicrosoftStickyNotes
+    - Microsoft.MixedReality.Portal
+    - Microsoft.Office.OneNote
+    - Microsoft.OneConnect
+    - Microsoft.People
+    - Microsoft.PowerAutomateDesktop
+    - Microsoft.Print3D
+    - Microsoft.ScreenSketch
+    - Microsoft.SkypeApp
+    - Microsoft.Todos
+    - Microsoft.Windows.Photos
+    - Microsoft.WindowsAlarms
+    - Microsoft.Wallet
+    - Microsoft.Whiteboard
+    - Microsoft.WindowsCamera
+    - microsoft.windowscommunicationsapps
+    - Microsoft.WindowsFeedbackHub
+    - Microsoft.WindowsMaps
+    - Microsoft.WindowsSoundRecorder
+    - Microsoft.Xbox
+    - Microsoft.Xbox.TCUI
+    - Microsoft.XboxApp
+    - Microsoft.XboxGameOverlay
+    - Microsoft.XboxSpeechToTextOverlay
+    - Microsoft.XboxSpeechToTextOverlay
+    - Microsoft.MixedReality.Portal
+    - Microsoft.XboxIdentityProvider
+    - Microsoft.ConnectivityStore
+    - Microsoft.CommsPhone
+    - Microsoft.YourPhone
+    - Microsoft.ZuneMusic
+    - Microsoft.ZuneVideo
+    - MicrosoftTeams
+
+- name: Software | Cleanup | Stat Ms Edge
+  win_stat:
+    path: 'C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe'
+  register: edge_info
+
+- name: Software | Cleanup | Remove Ms Edge
+  win_shell: Invoke-WebRequest -useb https://raw.githubusercontent.com/jokerwrld999/windows-ansible/main/roles/base/files/packages_cleanup/Edge_Removal.bat | Invoke-Expression
+  when: edge_info.stat.exists == false

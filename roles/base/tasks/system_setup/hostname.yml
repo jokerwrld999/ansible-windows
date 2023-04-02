@@ -1,0 +1,10 @@
+---
+
+- name: System setup | Hostname | Set hostname
+  win_hostname:
+    name: "{{ custom_hostname }}"
+  register: restart
+
+- name: System setup | Hostname | Reboot after apply
+  win_reboot:
+  when: restart.reboot_required

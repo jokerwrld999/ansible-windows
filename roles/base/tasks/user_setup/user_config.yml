@@ -1,0 +1,43 @@
+---
+
+- name: User Configuration | Copy dotfiles
+  win_copy:
+    src: "{{ item.src }}"
+    dest: '{{ home_dir }}\{{ item.dest }}'
+    recurse: yes
+  with_items:
+    - { src: 'git/gitconfig', dest: '.gitconfig' }
+
+- name: User Configuration | Ensure PSProfile is exists
+  win_stat:
+    path: '{{ home_dir }}\Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1'
+  register: file_info
+
+- name: User Configuration | Ensure PSProfile is correct
+  win_lineinfile:
+    path: '{{ home_dir }}\Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1'
+    line: "Import-Module -Name Terminal-Icons"
+    state: present
+  check_mode: yes
+  when: file_info.stat.exists == true
+  register: file_content
+
+- name: User Configuration | Run PowerShell customization
+  win_shell: irm 'https://github.com/jokerwrld999/ultimate-powershell/raw/main/setup.ps1' | iex
+  when: file_content.changed or file_info.stat.exists == false
+
+- name: User Configuration | Ensure walls is exists
+  win_stat:
+    path: '{{ home_dir }}\Pictures\walls'
+  register: walls_info
+
+- name: User Configuration | Download Walls
+  win_shell: git clone https://github.com/jokerwrld999/ultimate-backup.git '{{ temp_dir }}\ultimate-backup'
+  when: walls_info.stat.exists == false
+  register: walls_content
+
+- name: User Configuration | Copy Walls
+  win_robocopy:
+    src: '{{ temp_dir }}\ultimate-backup\walls'
+    dest: '{{ home_dir }}\Pictures\walls'
+  when: walls_content.changed

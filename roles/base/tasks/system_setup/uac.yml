@@ -1,0 +1,8 @@
+---
+
+- name: System setup | UAC| Disable UAC
+  win_regedit:
+    path: HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System
+    name: ConsentPromptBehaviorAdmin
+    data: 0
+    type: dword

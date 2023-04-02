@@ -1,0 +1,40 @@
+---
+- name: System setup | Taskbar | Unpin 'Search'
+  win_regedit:
+    path: HKCU:\Software\Microsoft\Windows\CurrentVersion\Search
+    name: SearchboxTaskbarMode
+    data: 0
+    type: dword
+
+- name: System setup | Taskbar | Unpin Task View, Chat and Cortana
+  win_regedit:
+    path: HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced
+    name: "{{ item }}"
+    data: 0
+    type: dword
+  loop:
+    - ShowCortanaButton
+    - ShowTaskViewButton
+    - TaskbarDa
+    - TaskbarMn
+
+- name: System setup | Taskbar | Unpin 'News and Interests'
+  win_regedit:
+    path: HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Feeds
+    name: EnableFeeds
+    data: 0
+    type: dword
+    state: present
+
+- name: System setup | Taskbar | Unpin 'People'
+  win_regedit:
+    path: HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\People
+    name: PeopleBand
+    data: 0
+    type: dword
+
+- name: System setup | Taskbar | Unpin 'Edge', 'Store' other built-in shortcuts
+  win_regedit:
+    path: HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Taskband
+    name: Favorites
+    state: absent

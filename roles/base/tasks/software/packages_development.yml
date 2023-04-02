@@ -1,0 +1,28 @@
+---
+
+- name: Software | Development | Install winget packages
+  ansible.windows.win_powershell:
+    script: |
+      $app = "{{ item.name }}"
+      if ($(winget list $app) -like "*No installed package found*") {
+        winget install --accept-package-agreements --accept-source-agreements -h -s "winget" $app
+      }
+      else {
+        winget upgrade $app
+      }
+    creates: "{{ item.path }}"
+  with_items:
+    - { name: 'github.cli', path: 'C:\Program Files\GitHub CLI\gh.exe' }
+    - { name: 'Git.Git', path: 'C:\Program Files\Git\git-bash.exe' }
+    - { name: 'GLab.GLab', path: 'C:\Program Files (x86)\glab\glab.exe' }
+    - { name: 'GNU.Nano', path: '{{ home_dir }}\AppData\Local\Microsoft\WinGet\Links\nano.exe' }
+    - { name: 'Microsoft.DotNet.DesktopRuntime.3_1', path: 'C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\3.1.*\Accessibility.dll' }
+    - { name: 'Microsoft.DotNet.DesktopRuntime.5', path: 'C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\5.*\Accessibility.dll' }
+    - { name: 'Microsoft.DotNet.DesktopRuntime.6', path: 'C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\6.*\Accessibility.dll' }
+    - { name: 'Microsoft.DirectX', path: 'C:\Windows\System32\d3d9.dll' }
+    - { name: 'Microsoft.VCRedist.2015+.x64', path: 'C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Redist\MSVC\v143\vc_redist.x64.exe' }
+    - { name: 'Microsoft.WindowsTerminal', path: '{{ home_dir }}\AppData\Local\Microsoft\WindowsApps\wt.exe' }
+    - { name: 'Microsoft.VisualStudio.2022.Community', path: 'C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\devenv.exe' }
+    - { name: 'Microsoft.VisualStudioCode', path: '{{ home_dir }}\AppData\Local\Programs\Microsoft VS Code\Code.exe' }
+    - { name: 'Python.Python.3.11', path: '{{ home_dir }}\AppData\Local\Programs\Python\Python311\python.exe' }
+    - { name: 'JanDeDobbeleer.OhMyPosh', path: '{{ home_dir }}\AppData\Local\Programs\oh-my-posh\bin\oh-my-posh.exe' }

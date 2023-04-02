@@ -1,0 +1,61 @@
+---
+# totalcommander
+- name: Software | Desktop | Install winget packages
+  ansible.windows.win_powershell:
+    script: |
+      $app = "{{ item.name }}"
+      if ($(winget list $app) -like "*No installed package found*") {
+        winget install --accept-package-agreements --accept-source-agreements -h -s "winget" $app
+      }
+      else {
+        winget upgrade $app
+      }
+    creates: "{{ item.path }}"
+  with_items:
+    - { name: '7zip.7zip', path: 'C:\Program Files\7-Zip\7z.exe' }
+    - { name: 'Lexikos.AutoHotkey', path: 'C:\Program Files\AutoHotkey\AutoHotkey.exe' }
+    - { name: 'Adobe.Acrobat.Reader.64-bit', path: 'C:\Program Files\Adobe\Acrobat DC\Acrobat\Acrobat.exe' }
+    - { name: 'DuongDieuPhap.ImageGlass', path: 'C:\Program Files\ImageGlass\ImageGlass.exe' }
+    - { name: 'Google.Chrome', path: 'C:\Program Files\Google\Chrome\Application\chrome.exe' }
+    - { name: 'Nilesoft.Shell', path: 'C:\Program Files\Nilesoft Shell\shell.exe' }
+    - { name: 'qBittorrent.qBittorrent', path: 'C:\Program Files\qBittorrent\qbittorrent.exe' }
+    - { name: 'ShareX.ShareX', path: 'C:\Program Files\ShareX\ShareX.exe' }
+    - { name: 'SlackTechnologies.Slack', path: 'C:\Program Files\Slack\slack.exe' }
+    - { name: 'Telegram.TelegramDesktop', path: '{{ home_dir }}\AppData\Roaming\Telegram Desktop\Telegram.exe' }
+    - { name: 'xanderfrangos.twinkletray', path: '{{ home_dir }}\AppData\Local\Programs\twinkle-tray\Twinkle Tray.exe' }
+    - { name: 'VideoLAN.VLC', path: 'C:\Program Files\VideoLAN\VLC\vlc.exe' }
+
+- name: Software | DisplayFusion | Install choco
+  win_chocolatey:
+    name: displayfusion
+    version: '9.9'
+    state: present
+
+- name: Software | DisplayFusion | Restore a Backup
+  win_template:
+    src: display_fusion/DisplayFusion_Backup.j2
+    dest: '{{ home_dir }}\Documents\DisplayFusion Backups\DisplayFusion_Backup.reg'
+
+- name: Software | AutoHotKey | Create a Directory
+  win_file:
+    path: '{{ home_dir }}\Documents\AutoHotKey\'
+    state: directory
+
+- name: Software | AutoHotKey | Restore a Backup
+  win_template:
+    src: autohotkey/custom_hotkeys.j2
+    dest: '{{ home_dir }}\Documents\AutoHotKey\custom_hotkeys.ahk'
+
+- name: Software | AutoHotKey | Start on boot
+  win_shortcut:
+    src: '{{ home_dir }}\Documents\AutoHotKey\custom_hotkeys.ahk'
+    dest: 'C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp\custom_hotkeys.lnk'
+    state: present
+
+- name: Software | ShareX | Restore a Backup
+  win_copy:
+    src: 'sharex/{{ item.src }}'
+    dest: '{{ home_dir }}\Documents\ShareX\Backup\'
+    recurse: yes
+  with_items:
+    - { src: 'ShareX_backup.sxb' }

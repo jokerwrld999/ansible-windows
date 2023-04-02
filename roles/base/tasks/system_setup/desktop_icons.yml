@@ -1,0 +1,17 @@
+---
+
+- name: System setup | Desktop shortcuts | Get shortcuts
+  win_find:
+    paths:
+      - C:\Users\Public\Desktop
+      - '{{ home_dir }}\Desktop'
+      - '{{ home_dir }}\OneDrive\Desktop'
+    patterns: "*.lnk"
+  register: shortcuts
+
+- name: System setup | Desktop shortcuts | Remove shortcuts from the Desktop
+  win_file:
+    path: "{{ item.path }}"
+    state: absent
+  loop: "{{ shortcuts.files | unique }}"
+  when: shortcuts.files | length > 0

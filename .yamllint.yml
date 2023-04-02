@@ -1,0 +1,15 @@
+---
+
+extends: default
+rules:
+  line-length:
+    max: 180
+  truthy:
+    allowed-values: ["yes", "no", "true", "false"]
+  braces:
+    min-spaces-inside: 1
+    max-spaces-inside: 3
+
+ignore: |
+  /.github
+  /collections/

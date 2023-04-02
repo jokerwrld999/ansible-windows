@@ -1,0 +1,31 @@
+---
+
+- block:
+    # Software Configuration
+    - import_tasks: software/packages_cleanup.yml
+    - import_tasks: software/packages_desktop.yml
+      when: install_desktop_packages
+    - import_tasks: software/packages_development.yml
+
+    # System Configuration
+    - import_tasks: system_setup/desktop_icons.yml
+      when: remove_desktop_icons
+    - import_tasks: system_setup/explorer.yml
+    - import_tasks: system_setup/hostname.yml
+      when: configure_hostname
+    - import_tasks: system_setup/power_plan.yml
+      when: change_power_plan
+    - import_tasks: system_setup/remote_desktop.yml
+      when: remote_desktop_enabled
+    - import_tasks: system_setup/start_menu.yml
+      when: configure_start_menu
+    - import_tasks: system_setup/oosu10.yml
+    - import_tasks: system_setup/taskbar.yml
+      when: configure_taskbar
+    - import_tasks: system_setup/uac.yml
+
+    # User Configuration
+    - import_tasks: user_setup/user_config.yml
+
+  rescue:
+    - set_fact: task_failed=true

@@ -1,0 +1,11 @@
+---
+
+- name: Telegram | Send completion alert
+  telegram:
+    token: "{{ telegram_token }}"
+    api_args:
+      chat_id: "{{ telegram_chat_id }}"
+      parse_mode: "markdown"
+      text: "✔️  Ansible provision finished on *{{ ansible_hostname }}*"
+  changed_when: false
+  delegate_to: localhost

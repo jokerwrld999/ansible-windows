@@ -1,0 +1,22 @@
+---
+
+- name: System setup | OOSU10 | Ensure ooshutup10.cfg is exists
+  win_stat:
+    path: '{{ temp_dir }}\ooshutup10.cfg'
+  register: ooshutup10_info
+
+- name: System setup | OOSU10 | Ensure ooshutup10.cfg is correct
+  win_lineinfile:
+    path: '{{ temp_dir }}\ooshutup10.cfg'
+    line: "P001	+"
+    state: present
+  check_mode: yes
+  when: ooshutup10_info.stat.exists == true
+  register: ooshutup10_content
+
+- name: System setup | OOSU10 | Run Tweak OOSU10
+  win_shell: |
+    curl.exe -s "https://raw.githubusercontent.com/ChrisTitusTech/winutil/main/ooshutup10_winutil_settings.cfg" -o $ENV:temp\\ooshutup10.cfg
+    curl.exe -s "https://dl5.oo-software.com/files/ooshutup10/OOSU10.exe" -o $ENV:temp\\OOSU10.exe
+    Start-Process $ENV:temp\\OOSU10.exe -ArgumentList "$ENV:temp\\ooshutup10.cfg /quiet"
+  when: ooshutup10_content.changed or ooshutup10_info.stat.exists == false

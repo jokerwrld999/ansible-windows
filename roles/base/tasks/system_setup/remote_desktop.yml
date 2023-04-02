@@ -1,0 +1,18 @@
+---
+- name: System setup | RDP | Configure RDP Services
+  win_regedit:
+    path: "{{ item }}"
+    name: fDenyTSConnections
+    data: 00000000
+    type: dword
+    state: "{{ 'present' if remote_desktop_enabled else 'absent' }}"
+  with_items:
+    - "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Terminal Server\\"
+    - "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows NT\\Terminal Services"
+  register: rdp_service
+
+- name: System setup | RDP | Configure Firewall rules (RDS)
+  win_shell: >
+    "{{ 'Enable-NetFirewallRule' if remote_desktop_enabled else 'Disable-NetFirewallRule' }}
+    -DisplayGroup 'Remotedesktop'"
+  when: rdp_service.changed

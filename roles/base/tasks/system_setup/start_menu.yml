@@ -1,0 +1,39 @@
+---
+
+- name: System setup | Start menu | Disable Automatic Install of Suggested Apps
+  win_regedit:
+    path: HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager
+    name: SilentInstalledAppsEnabled
+    data: 0
+    type: dword
+
+- name: System setup | Start menu | Disable App Suggestions
+  win_regedit:
+    path: HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager
+    name: SystemPaneSuggestionsEnabled
+    data: 0
+    type: dword
+
+- name: System setup | Start menu | Disable popup "tips" about Windows
+  win_regedit:
+    path: HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager
+    name: SoftLandingEnabled
+    data: 0
+    type: dword
+
+- name: System setup | Start menu | Disable 'Windows Welcome Experience'
+  win_regedit:
+    path: HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager
+    name: "{{ item }}"
+    data: 0
+    type: dword
+  loop:
+    - SubscribedContent-310093Enabled
+    - SubscribedContent-338387Enabled
+    - SubscribedContent-338388Enabled
+    - SubscribedContent-338389Enabled
+    - SubscribedContent-338393Enabled
+    - SubscribedContent-353694Enabled
+    - SubscribedContent-353696Enabled
+    - SubscribedContent-353698Enabled
+    - SubscribedContent-88000326Enabled
