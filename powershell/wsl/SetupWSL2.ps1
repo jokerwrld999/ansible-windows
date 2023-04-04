@@ -2,6 +2,7 @@
 
 $wsl_dir = "$env:userprofile\WSL"
 $custom_user = "jokerwrld"
+$passwd = '1234'
 if (!(Test-Path -Path "$wsl_dir")) {
     New-Item -Path "$wsl_dir" -ItemType "directory"
 }
@@ -22,8 +23,22 @@ if ($distro -eq "arch"){
         Write-Host "Arch Distro already exists" -f Yellow
     }
 
+    Write-Host "####### Start Arch Distro....... #######" -f Green
     Start-Process -WindowStyle hidden $wsl_dir\Arch\Arch.exe
-    wsl -d Arch | echo jokerwrld > ~/power
+    Write-Host "####### Arch Pre-Setup And Update....... #######" -f Green
+    wsl -d Arch -u root -e pacman -Sy archlinux-keyring --noconfirm
+    wsl -d Arch -u root -e pacman -Syu --noconfirm
+    wsl -d Arch -u root -e pacman -S ansible --needed --noconfirm
+    wsl -d Arch -u root /bin/bash -c "echo $custom_user >> ~/.vault_pass"
+    wsl -d Arch -u root /bin/bash -c "echo -e '[boot]\nsystemd=true\n\n[user]\ndefault=$custom_user' > /etc/wsl.conf"
+    #wsl --terminate Arch
+
+    Write-Host "####### Arch Setup Default User....... #######" -f Green
+    wsl -d Arch -u root /bin/bash -c "echo '%wheel ALL=(ALL) ALL' > /etc/sudoers.d/wheel"
+    wsl -d Arch -u root /bin/bash -c "useradd -m -p $passwd -G wheel -s /bin/bash $custom_user"
+    wsl -d Arch -u root /bin/bash -c "echo $passwd | passwd $custom_user"
+    wsl --terminate Arch
+    ansible-pull -U https://github.com/jokerwrld999/ansible-linux.git
 
 }
 elseif ($distro -eq "fedora") {
