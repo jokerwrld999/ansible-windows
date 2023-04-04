@@ -1,14 +1,21 @@
 # \#Requires -RunAsAdministrator
 
 $wsl_dir = "$env:userprofile\WSL"
-$custom_user = "jokerwrld"
-$passwd = "joker"
+$distro = $args[0]
+$custom_user = $args[1]
+$passwd = $args[2]
+$vault_pass = $args[3]
+
+if (!($custom_user = "")) { $custom_user = "jokerwrld" }
+if (!($passwd = "")) { $passwd = $custom_user }
+if (!($vault_pass = Read-Host "Vault pass ")) { $vault_pass = "$default_pass" }
+
+
 if (!(Test-Path -Path "$wsl_dir")) {
     New-Item -Path "$wsl_dir" -ItemType "directory"
 }
 
-$distro = "$args"
-if ($distro -eq "arch"){
+if ($distro -eq "Arch"){
     if (!(Test-Path -Path "$wsl_dir\Arch.zip") -and !(Test-Path -Path "$wsl_dir\Arch")) {
         Write-Host "####### Downloading Arch Distro....... #######" -f Green
         Invoke-WebRequest -Uri https://github.com/yuk7/ArchWSL/releases/download/22.10.16.0/Arch.zip -OutFile $wsl_dir\Arch.zip
@@ -26,31 +33,35 @@ if ($distro -eq "arch"){
     Write-Host "####### Start Arch Distro....... #######" -f Green
     Start-Process -WindowStyle hidden $wsl_dir\Arch\Arch.exe
     Write-Host "####### Arch Pre-Setup And Update....... #######" -f Green
-    wsl -d Arch -u root -e pacman -Sy archlinux-keyring --needed --noconfirm
-    wsl -d Arch -u root -e pacman -Syu --noconfirm
-    wsl -d Arch -u root -e pacman -S ansible git --needed --noconfirm
-    wsl -d Arch -u root /bin/bash -c "echo $custom_user >> ~/.vault_pass"
-    wsl -d Arch -u root /bin/bash -c "echo -e '[boot]\nsystemd=true\n\n[user]\ndefault=$custom_user' > /etc/wsl.conf"
-    wsl --terminate Arch
+    wsl -d Arch -u root /bin/bash -c "
+        pacman -Sy archlinux-keyring --needed --noconfirm;
+        pacman -Syu --noconfirm;
+        pacman -S ansible git --needed --noconfirm;
+    "
 
     Write-Host "####### Arch Setup Default User....... #######" -f Green
-    wsl -d Arch -u root /bin/bash -c "echo '%wheel ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/wheel"
-    wsl -d Arch -u root /bin/bash -c "useradd -m -p $passwd -G wheel -s /bin/bash $custom_user"
-    wsl -d Arch -u root /bin/bash -c "echo $custom_user\:$passwd | chpasswd"
+    wsl -d Arch -u root /bin/bash -c "
+        echo $vault_pass > /home/$custom_user/.vault_pass;
+        echo -e '[boot]\nsystemd=true\n\n[user]\ndefault=$custom_user' > /etc/wsl.conf;
+        echo '%wheel ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/wheel;
+        useradd -m -p $passwd -G wheel -s /bin/bash $custom_user;
+    "
     wsl --terminate Arch
 
     Write-Host "####### Initialize keyring....... #######" -f Green
-    wsl -d Arch -u $custom_user /bin/bash -c "sudo pacman-key --init"
-    wsl -d Arch -u $custom_user /bin/bash -c "sudo pacman-key --populate"
-    wsl -d Arch -u $custom_user /bin/bash -c "sudo pacman -Sy archlinux-keyring --needed --noconfirm"
-    wsl -d Arch -u $custom_user /bin/bash -c "sudo pacman -Su --needed --noconfirm"
+    wsl -d Arch -u $custom_user /bin/bash -c "
+        sudo pacman-key --init;
+        sudo pacman-key --populate;
+        sudo pacman -Sy archlinux-keyring --needed --noconfirm;
+        sudo pacman -Su --needed --noconfirm
+    "
 
     Write-Host "####### Run Ansible Playbook....... #######" -f Green
     wsl -d Arch -u $custom_user /bin/bash -c "ansible-pull -U https://github.com/jokerwrld999/ansible-linux.git"
 
 
 }
-elseif ($distro -eq "fedora") {
+elseif ($distro -eq "Fedora") {
     if (!(Test-Path -Path "$wsl_dir\Fedora.msixbundle") ) {
         Write-Host "####### Downloading Fedora Distro And Cert....... #######" -f Green
         Invoke-WebRequest -Uri https://github.com/VSWSL/Fedora-WSL/releases/download/v37.0.3.0/FedoraWSL-Appx_37.0.3.0_x64.msixbundle -OutFile $wsl_dir\Fedora.msixbundle
@@ -67,8 +78,8 @@ elseif ($distro -eq "fedora") {
         Write-Host "Fedora Distro already exists" -f Yellow
     }
 }
-elseif ($distro -eq "ubuntu" -or $distro -eq "" ) {
-    'We found a ubuntu'
+elseif ($distro -eq "Ubuntu" -or $distro -eq "" ) {
+    wsl --install ubuntu
 }
 else {
     Write-Host "No shuch distro in the list" -f Yellow
