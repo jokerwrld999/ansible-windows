@@ -44,10 +44,10 @@ if ($distro -eq "arch"){
     wsl -d Arch -u $custom_user /bin/bash -c "sudo pacman-key --populate"
     wsl -d Arch -u $custom_user /bin/bash -c "sudo pacman -Sy archlinux-keyring --needed --noconfirm"
     wsl -d Arch -u $custom_user /bin/bash -c "sudo pacman -Su --needed --noconfirm"
-    
+
     Write-Host "####### Run Ansible Playbook....... #######" -f Green
-    wsl -d Arch -u $custom_user /bin/bash -c "mkdir ~/github && cd ~/github && git clone https://github.com/jokerwrld999/ansible-linux.git"
-    wsl -d Arch -u $custom_user /bin/bash -c "cd ~/github/ansible-linux; ansible-playbook local.yml"
+    wsl -d Arch -u $custom_user /bin/bash -c "ansible-pull -U https://github.com/jokerwrld999/ansible-linux.git"
+
 
 }
 elseif ($distro -eq "fedora") {
