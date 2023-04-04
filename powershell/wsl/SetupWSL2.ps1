@@ -1,6 +1,6 @@
 # \#Requires -RunAsAdministrator
 
-$wsl_dir = "$env:userprofile\WSL"
+$wsl_dir = "$env:userprofile\AppData\Local\Packages\"
 $distro = $args[0]
 $custom_user = $args[1]
 $passwd = $args[2]
@@ -9,11 +9,6 @@ $vault_pass = $args[3]
 if (!($custom_user = "")) { $custom_user = "jokerwrld" }
 if (!($passwd = "")) { $passwd = $custom_user }
 if (!($vault_pass = Read-Host "Vault pass ")) { $vault_pass = "$default_pass" }
-
-
-if (!(Test-Path -Path "$wsl_dir")) {
-    New-Item -Path "$wsl_dir" -ItemType "directory"
-}
 
 if ($distro -eq "Arch"){
     if (!(Test-Path -Path "$wsl_dir\Arch.zip") -and !(Test-Path -Path "$wsl_dir\Arch")) {
@@ -32,34 +27,48 @@ if ($distro -eq "Arch"){
 
     Write-Host "####### Start Arch Distro....... #######" -f Green
     Start-Process -WindowStyle hidden $wsl_dir\Arch\Arch.exe
-    Write-Host "####### Arch Pre-Setup And Update....... #######" -f Green
-    wsl -d Arch -u root /bin/bash -c "
-        pacman -Sy archlinux-keyring --needed --noconfirm;
-        pacman -Syu --noconfirm;
-        pacman -S ansible git --needed --noconfirm;
-    "
 
-    Write-Host "####### Arch Setup Default User....... #######" -f Green
-    wsl -d Arch -u root /bin/bash -c "
-        echo $vault_pass > /home/$custom_user/.vault_pass;
-        echo -e '[boot]\nsystemd=true\n\n[user]\ndefault=$custom_user' > /etc/wsl.conf;
-        echo '%wheel ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/wheel;
-        useradd -m -p $passwd -G wheel -s /bin/bash $custom_user;
-    "
-    wsl --terminate Arch
+    while($true) {
+        Write-Host "####### Arch Pre-Setup And Update....... #######" -f Green
+        wsl -d Arch -e ls
+        if($? -eq "true") {
+            wsl -d Arch -u root /bin/bash -c "
+                rm -rf /var/lib/pacman/db.lck
+                pacman -Sy archlinux-keyring --needed --noconfirm;
+                pacman -Syu --noconfirm;
+                pacman -S ansible git --needed --noconfirm;
+            "
 
-    Write-Host "####### Initialize keyring....... #######" -f Green
-    wsl -d Arch -u $custom_user /bin/bash -c "
-        sudo pacman-key --init;
-        sudo pacman-key --populate;
-        sudo pacman -Sy archlinux-keyring --needed --noconfirm;
-        sudo pacman -Su --needed --noconfirm
-    "
+            Write-Host "####### Arch Setup Default User....... #######" -f Green
+            wsl -d Arch -u root /bin/bash -c "
+                echo -e '[boot]\nsystemd=true\n\n[user]\ndefault=$custom_user' > /etc/wsl.conf;
+                echo '%wheel ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/wheel;
+                useradd -m -p $passwd -G wheel -s /bin/bash $custom_user;
+                echo $vault_pass > /home/$custom_user/.vault_pass;
+            "
+            wsl --terminate Arch
 
-    Write-Host "####### Run Ansible Playbook....... #######" -f Green
-    wsl -d Arch -u $custom_user /bin/bash -c "ansible-pull -U https://github.com/jokerwrld999/ansible-linux.git"
+            Write-Host "####### Initialize keyring....... #######" -f Green
+            wsl -d Arch -u $custom_user /bin/bash -c "
+                sudo pacman-key --init;
+                sudo pacman-key --populate;
+                sudo pacman -Sy archlinux-keyring --needed --noconfirm;
+                sudo pacman -Su --needed --noconfirm
+            "
 
-
+            Write-Host "####### Run Ansible Playbook....... #######" -f Green
+            wsl -d Arch -u $custom_user /bin/bash -c "ansible-pull -U https://github.com/jokerwrld999/ansible-linux.git"
+            break
+            #Write-Host "####### Remove Temp Files....... #######" -f Green
+            #tasklist /v | grep "Arch.exe" 
+            #Stop-Process 
+            #Remove-Item -Recurse -Force $env:userprofile\WSL
+        }
+        else {
+            Write-Host "####### Registring Arch Distro....... #######" -f Blue
+            Start-Sleep -s 10
+        }
+    }
 }
 elseif ($distro -eq "Fedora") {
     if (!(Test-Path -Path "$wsl_dir\Fedora.msixbundle") ) {
