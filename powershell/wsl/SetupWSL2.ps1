@@ -36,9 +36,8 @@ if ($distro -eq "arch"){
     Write-Host "####### Arch Setup Default User....... #######" -f Green
     wsl -d Arch -u root /bin/bash -c "echo '%wheel ALL=(ALL) ALL' > /etc/sudoers.d/wheel"
     wsl -d Arch -u root /bin/bash -c "useradd -m -p $passwd -G wheel -s /bin/bash $custom_user"
-    wsl -d Arch -u root /bin/bash -c "echo $passwd | passwd $custom_user"
     wsl --terminate Arch
-    ansible-pull -U https://github.com/jokerwrld999/ansible-linux.git
+    wsl -d Arch ansible-pull -U https://github.com/jokerwrld999/ansible-linux.git
 
 }
 elseif ($distro -eq "fedora") {
