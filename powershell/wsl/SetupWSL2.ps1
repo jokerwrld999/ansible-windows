@@ -37,7 +37,7 @@ function setupUser($sudo_group) {
 }
 
 if ($distro -eq "Arch") {
-    if (!(Test-Path -Path "$wsl_dir\Arch.zip") -and !(Test-Path -Path "$wsl_dir\Arch\rootfs.tar.gz")) {
+    if (!(Test-Path -Path "$wsl_dir\Arch.zip") -or !(Test-Path -Path "$wsl_dir\Arch\rootfs.tar.gz")) {
         Write-Host "####### Downloading Arch Distro....... #######" -f Green
         Invoke-WebRequest -Uri https://github.com/yuk7/ArchWSL/releases/download/22.10.16.0/Arch.zip -OutFile $wsl_dir\Arch.zip
 
