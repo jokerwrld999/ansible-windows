@@ -26,7 +26,6 @@ if ($vault_pass -eq $null) {
 }
 
 function setupUser($sudo_group) {
-    Write-Host "####### Distro is $distro and $sudo_group" -f Red
     wsl -d $distro -u root /bin/bash -c "
         echo '%$sudo_group ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/$sudo_group;
         echo -e '[boot]\nsystemd=true\n\n[user]\ndefault=$custom_user' > /etc/wsl.conf;
