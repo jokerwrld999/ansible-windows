@@ -43,11 +43,10 @@ if ($distro -eq "Arch") {
         Write-Host "####### Extractiing Arch Distro....... #######" -f Green
         Expand-Archive -Path $wsl_dir\Arch.zip -DestinationPath $wsl_dir\Arch
 
-        Write-Host "####### Remove Temp Files....... #######" -f Green
-        Remove-Item -Recurse -Force $wsl_dir\Arch.zip
-    }
-    else {
-        Write-Host "Arch Distro already exists" -f Yellow
+        if (!(Test-Path -Path "$wsl_dir\Arch.zip") ){
+            Write-Host "####### Removing Temp Files....... #######" -f Green
+            Remove-Item -Recurse -Force $wsl_dir\Arch.zip
+        }
     }
 
     Write-Host "####### Starting Arch Distro....... #######" -f Green
@@ -93,6 +92,11 @@ elseif ($distro -eq "Fedora") {
         Import-Certificate -FilePath "$wsl_dir\Fedora.cer" -CertStoreLocation Cert:\LocalMachine\Root
         Add-AppxPackage -Path "$wsl_dir\Fedora.msixbundle"
 
+        if (!(Test-Path -Path "$wsl_dir\Arch.zip") ){
+            Write-Host "####### Removing Temp Files....... #######" -f Green
+            Remove-Item -Recurse -Force $wsl_dir\Fedora.msixbundle $wsl_dir\Fedora.cer
+        }
+
         Write-Host "####### Updating Distro....... #######" -f Green
         wsl -d $distro -u root /bin/bash -c "
             dnf update -y;
@@ -101,9 +105,6 @@ elseif ($distro -eq "Fedora") {
 
         Write-Host "####### Setting Up Default User....... #######" -f Green
         setupUser 'wheel'
-
-        Write-Host "####### Remove Temp Files....... #######" -f Green
-        Remove-Item -Recurse -Force $wsl_dir\Fedora.msixbundle $wsl_dir\Fedora.cer
     }
     else {
         Write-Host "Fedora Distro already exists" -f Yellow
@@ -122,7 +123,6 @@ elseif ($distro -eq "Ubuntu" -or $distro -eq $null ) {
     "
     Write-Host "####### Setting Up Distro....... #######" -f Green
     setupUser 'sudo'
-
 }
 else {
     Write-Host "No shuch distro in the list" -f Yellow
