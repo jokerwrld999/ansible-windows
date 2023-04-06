@@ -1,4 +1,4 @@
-# \#Requires -RunAsAdministrator
+##Requires -RunAsAdministrator
 
 $distro = $args[0]
 $wsl_dir = "$env:userprofile\AppData\Local\Packages\"
@@ -36,12 +36,15 @@ function setupUser($sudo_group) {
 }
 
 if ($distro -eq "Arch") {
-    if (!(Test-Path -Path "$wsl_dir\Arch.zip") -or !(Test-Path -Path "$wsl_dir\Arch\rootfs.tar.gz")) {
+    if (!(Test-Path -Path "$wsl_dir\Arch.zip") -and !(Test-Path -Path "$wsl_dir\Arch\rootfs.tar.gz")) {
         Write-Host "####### Downloading Arch Distro....... #######" -f Green
         Invoke-WebRequest -Uri https://github.com/yuk7/ArchWSL/releases/download/22.10.16.0/Arch.zip -OutFile $wsl_dir\Arch.zip
 
         Write-Host "####### Extractiing Arch Distro....... #######" -f Green
         Expand-Archive -Path $wsl_dir\Arch.zip -DestinationPath $wsl_dir\Arch
+
+        Write-Host "####### Remove Temp Files....... #######" -f Green
+        Remove-Item -Recurse -Force $wsl_dir\Arch.zip
     }
     else {
         Write-Host "Arch Distro already exists" -f Yellow
@@ -50,9 +53,9 @@ if ($distro -eq "Arch") {
     Write-Host "####### Starting Arch Distro....... #######" -f Green
     Start-Process -WindowStyle hidden $wsl_dir\Arch\Arch.exe
     while($true) {
-        Write-Host "####### Updating Distro....... #######" -f Green
         wsl -d Arch -e ls
         if($? -eq "true") {
+            Write-Host "####### Updating Distro....... #######" -f Green
             wsl -d Arch -u root /bin/bash -c "
                 rm -rf /var/lib/pacman/db.lck;
                 pacman -Sy archlinux-keyring --needed --noconfirm;
@@ -79,9 +82,6 @@ if ($distro -eq "Arch") {
             Start-Sleep -s 10
         }
     }
-
-    Write-Host "####### Remove Temp Files....... #######" -f Green
-    Remove-Item -Recurse -Force $wsl_dir\Arch.zip
 }
 elseif ($distro -eq "Fedora") {
     if (!(Test-Path -Path "$wsl_dir\Fedora.msixbundle") ) {

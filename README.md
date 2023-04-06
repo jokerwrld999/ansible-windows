@@ -2,17 +2,33 @@
 
 This project aims to simplify the installation and configuration of essential software required for web and software development. Please refer to the instructions below to provision your operating system and get started with ease.
 
-# Setting up a Windows Host (Managed node)
+# Setting up a Machine
 
-1. Run PowerShell As Administrator
-
-2. Launch Command To Enable WinRM:
+## 1. To Enable WinRM:
 
 ```
-irm "https://raw.githubusercontent.com/jokerwrld999/windows-ansible/main/EnableWinRM.ps1" | iex
+irm "https://raw.githubusercontent.com/jokerwrld999/ansible-windows/main/powershell/winrm/EnableWinRM.ps1" | iex
 ```
 
-# Setting up a Server (Control node)
+## 2. To Disable WinRM:
+
+```
+irm "https://raw.githubusercontent.com/jokerwrld999/ansible-windows/main/powershell/winrm/DisableWinRM.ps1" | iex
+```
+
+## 3. To Set Up WSL:
+
+```
+irm "https://raw.githubusercontent.com/jokerwrld999/ansible-windows/main/powershell/wsl/SetupWSL.ps1" | iex
+```
+
+## 4. To Set Up OpenSSH:
+
+```
+irm "https://raw.githubusercontent.com/jokerwrld999/ansible-windows/main/powershell/openssh/SetupOpenSSH.ps1" | iex
+```
+
+# Variables List
 
 * Modify the variables in inventory/hosts.ini
 
@@ -66,13 +82,15 @@ ansible-playbook local.yml
 
 ## Overview
 
+- Update windows system
+- Set up Windows Subsystem Linux(WSL)
+- Set up Ansible automation
+- Set up OpenSSH
 - Debloat your windows machine
 - Install specified software
 - Tweak windows and reduce running processes
-- Restore User's Configs
-- Update windows system
+- Restore user's configs
 - Get a notification in Telegram once setup is finished
-
 
 ## Issues
 
