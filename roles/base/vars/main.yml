@@ -1,7 +1,7 @@
 ---
 
 # Software Configuration
-install_desktop_packages: true
+install_desktop_packages: false
 
 # User Configuration
 custom_user: jokerwrld
@@ -10,7 +10,7 @@ temp_dir: '{{ home_dir }}\AppData\Local\Temp'
 
 # System Configuration
 configure_hostname: true
-custom_hostname: Workstation
+custom_hostname: Server
 
 change_power_plan: true
 # high_performance, balanced, power_saver
