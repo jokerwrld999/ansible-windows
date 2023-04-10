@@ -9,17 +9,17 @@ home_dir: 'C:\Users\{{ custom_user }}'
 temp_dir: '{{ home_dir }}\AppData\Local\Temp'
 
 # System Configuration
-configure_hostname: false
+configure_hostname: true
 custom_hostname: Workstation
 
-change_power_plan: false
+change_power_plan: true
 # high_performance, balanced, power_saver
 power_plan: "high_performance"
 
-configure_start_menu: false
-configure_taskbar: false
-remove_desktop_icons: false
-remote_desktop_enabled: false
+configure_start_menu: true
+configure_taskbar: true
+remove_desktop_icons: true
+remote_desktop_enabled: true
 
 telegram_chat_id: !vault |
           $ANSIBLE_VAULT;1.1;AES256
