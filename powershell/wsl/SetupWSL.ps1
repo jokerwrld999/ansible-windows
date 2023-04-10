@@ -1,4 +1,4 @@
-##Requires -RunAsAdministrator
+#Requires -RunAsAdministrator
 
 $distro = $args[0]
 $wsl_dir = "$env:userprofile\AppData\Local\Packages\"
@@ -80,34 +80,6 @@ if ($distro -eq "Arch") {
             Write-Host "####### Registring Arch Distro....... #######" -f Blue
             Start-Sleep -s 10
         }
-    }
-}
-elseif ($distro -eq "Fedora") {
-    if (!(Test-Path -Path "$wsl_dir\Fedora.msixbundle") ) {
-        Write-Host "####### Downloading Fedora Distro And Cert....... #######" -f Green
-        Invoke-WebRequest -Uri https://github.com/VSWSL/Fedora-WSL/releases/download/v37.0.3.0/FedoraWSL-Appx_37.0.3.0_x64.msixbundle -OutFile $wsl_dir\Fedora.msixbundle
-        Invoke-WebRequest -Uri https://github.com/VSWSL/Fedora-WSL/releases/download/v37.0.3.0/FedoraWSL-Appx_37.0.3.0_x64.cer -OutFile $wsl_dir\Fedora.cer
-
-        Write-Host "####### Installing Distro....... #######" -f Green
-        Import-Certificate -FilePath "$wsl_dir\Fedora.cer" -CertStoreLocation Cert:\LocalMachine\Root
-        Add-AppxPackage -Path "$wsl_dir\Fedora.msixbundle"
-
-        if (!(Test-Path -Path "$wsl_dir\Arch.zip") ){
-            Write-Host "####### Removing Temp Files....... #######" -f Green
-            Remove-Item -Recurse -Force $wsl_dir\Fedora.msixbundle $wsl_dir\Fedora.cer
-        }
-
-        Write-Host "####### Updating Distro....... #######" -f Green
-        wsl -d $distro -u root /bin/bash -c "
-            dnf update -y;
-            dnf install ansible git -y
-        "
-
-        Write-Host "####### Setting Up Default User....... #######" -f Green
-        setupUser 'wheel'
-    }
-    else {
-        Write-Host "Fedora Distro already exists" -f Yellow
     }
 }
 elseif ($distro -eq "Ubuntu" -or $distro -eq $null ) {
