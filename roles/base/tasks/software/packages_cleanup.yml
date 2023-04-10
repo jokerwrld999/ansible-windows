@@ -67,5 +67,5 @@
   register: edge_info
 
 - name: Software | Cleanup | Remove Ms Edge
-  win_shell: Invoke-WebRequest -useb https://raw.githubusercontent.com/jokerwrld999/windows-ansible/main/roles/base/files/packages_cleanup/Edge_Removal.bat | Invoke-Expression
+  win_shell: Invoke-WebRequest -useb https://raw.githubusercontent.com/jokerwrld999/ansible-windows/main/roles/base/files/packages_cleanup/Edge_Removal.bat | Invoke-Expression
   when: edge_info.stat.exists == false
