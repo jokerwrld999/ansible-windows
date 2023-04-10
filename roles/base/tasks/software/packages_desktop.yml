@@ -20,7 +20,7 @@
     - { name: 'Nilesoft.Shell', path: 'C:\Program Files\Nilesoft Shell\shell.exe' }
     - { name: 'qBittorrent.qBittorrent', path: 'C:\Program Files\qBittorrent\qbittorrent.exe' }
     - { name: 'ShareX.ShareX', path: 'C:\Program Files\ShareX\ShareX.exe' }
-    - { name: 'SlackTechnologies.Slack', path: 'C:\Program Files\Slack\slack.exe' }
+    - { name: 'SlackTechnologies.Slack', path: '{{ home_dir }}\AppData\Local\slack\slack.exe' }
     - { name: 'Telegram.TelegramDesktop', path: '{{ home_dir }}\AppData\Roaming\Telegram Desktop\Telegram.exe' }
     - { name: 'xanderfrangos.twinkletray', path: '{{ home_dir }}\AppData\Local\Programs\twinkle-tray\Twinkle Tray.exe' }
     - { name: 'VideoLAN.VLC', path: 'C:\Program Files\VideoLAN\VLC\vlc.exe' }

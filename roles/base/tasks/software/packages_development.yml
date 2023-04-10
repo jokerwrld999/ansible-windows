@@ -24,4 +24,4 @@
     - { name: 'Microsoft.WindowsTerminal', path: '{{ home_dir }}\AppData\Local\Microsoft\WindowsApps\wt.exe' }
     - { name: 'Microsoft.VisualStudio.2022.Community', path: 'C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\devenv.exe' }
     - { name: 'Microsoft.VisualStudioCode', path: '{{ home_dir }}\AppData\Local\Programs\Microsoft VS Code\Code.exe' }
-    - { name: 'Python.Python.3.10', path: 'C:\Python310\python.exe' }
+    - { name: 'Python.Python.3.11', path: '{{ home_dir }}\AppData\Local\Programs\Python\Python311\python.exe' }

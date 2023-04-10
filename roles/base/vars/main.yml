@@ -1,7 +1,7 @@
 ---
 
 # Software Configuration
-install_desktop_packages: true
+install_desktop_packages: false
 
 # User Configuration
 custom_user: jokerwrld
@@ -9,17 +9,17 @@ home_dir: 'C:\Users\{{ custom_user }}'
 temp_dir: '{{ home_dir }}\AppData\Local\Temp'
 
 # System Configuration
-configure_hostname: false
-custom_hostname: Workstation
+configure_hostname: true
+custom_hostname: Server
 
-change_power_plan: false
+change_power_plan: true
 # high_performance, balanced, power_saver
 power_plan: "high_performance"
 
-configure_start_menu: false
-configure_taskbar: false
-remove_desktop_icons: false
-remote_desktop_enabled: false
+configure_start_menu: true
+configure_taskbar: true
+remove_desktop_icons: true
+remote_desktop_enabled: true
 
 telegram_chat_id: !vault |
           $ANSIBLE_VAULT;1.1;AES256
