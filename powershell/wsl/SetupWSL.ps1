@@ -26,19 +26,13 @@ if ($vault_pass -eq $null) {
 }
 
 function setupUser($sudo_group) {
-    wsl -d $distro -u root /bin/bash -c "
-        echo '%$sudo_group ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/$sudo_group;
-        echo -e '[boot]\nsystemd=true\n\n[user]\ndefault=$custom_user' > /etc/wsl.conf;
-        useradd -m -p $passwd -G $sudo_group -s /bin/bash $custom_user;
-        echo $vault_pass > /home/$custom_user/.vault_pass
-    "
+    wsl -d $distro -u root /bin/bash -c "echo '%$sudo_group ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/$sudo_group; echo -e '[boot]\nsystemd=true\n\n[user]\ndefault=$custom_user' > /etc/wsl.conf; useradd -m -p $passwd -G $sudo_group -s /bin/bash $custom_user; usermod -a -G $sudo_group $custom_user; echo $vault_pass > /home/$custom_user/.vault_pass"
     wsl --terminate $distro
 }
 
-if ($distro -eq "Arch") {
-    if ((Test-Path -Path "$wsl_dir\Arch\rootfs.tar.gz")) {
-        Write-Host "####### Removing Arch Folder....... #######" -f Green
-        Remove-Item -Recurse -Force $wsl_dir\Arch
+if ($distro -eq "Arch" -or $distro -eq $null ) {
+    $distro = "arch"
+    if (!(Test-Path -Path "$wsl_dir\Arch\rootfs.tar.gz")) {
         Write-Host "####### Downloading Arch Distro....... #######" -f Green
         Invoke-WebRequest -Uri https://github.com/yuk7/ArchWSL/releases/download/22.10.16.0/Arch.zip -OutFile $wsl_dir\Arch.zip
 
@@ -54,26 +48,16 @@ if ($distro -eq "Arch") {
     Write-Host "####### Starting Arch Distro....... #######" -f Green
     Start-Process -WindowStyle hidden $wsl_dir\Arch\Arch.exe
     while($true) {
-        wsl -d Arch -e ls
+        wsl -d Arch -u root /bin/sh -c "cd; ls -la"
         if($? -eq "true") {
             Write-Host "####### Updating Distro....... #######" -f Green
-            wsl -d Arch -u root /bin/bash -c "
-                pacman -Sy archlinux-keyring --needed --noconfirm;
-                pacman -Syu --noconfirm;
-                pacman -S ansible git --needed --noconfirm
-            "
+            wsl -d Arch -u root /bin/bash -c "rm -rf /var/lib/pacman/db.lck 2>/dev/null;pacman -Syu --noconfirm; pacman -Sy archlinux-keyring --needed --noconfirm; pacman -S ansible git --needed --noconfirm"
 
             Write-Host "####### Setting Up Default User....... #######" -f Green
             setupUser 'wheel'
-            wsl -d Arch -u root /bin/bash -c "usermod -a -G wheel $custom_user"
 
             Write-Host "####### Initializing keyring....... #######" -f Green
-            wsl -d Arch -u $custom_user /bin/bash -c "
-                sudo pacman-key --init;
-                sudo pacman-key --populate;
-                sudo pacman -Sy archlinux-keyring --needed --noconfirm;
-                sudo pacman -Su --needed --noconfirm
-            "
+            wsl -d Arch -u $custom_user /bin/bash -c "sudo pacman-key --init; sudo pacman-key --populate; sudo pacman -Sy archlinux-keyring --needed --noconfirm; sudo pacman -Su --needed --noconfirm"
 
             break
         }
@@ -83,17 +67,14 @@ if ($distro -eq "Arch") {
         }
     }
 }
-elseif ($distro -eq "Ubuntu" -or $distro -eq $null ) {
-    $distro = "ubuntu"
+elseif ($distro -eq "Ubuntu") {
 
     Write-Host "####### Installing Ubuntu Distro....... #######" -f Green
     ubuntu install --root
 
     Write-Host "####### Updating Distro....... #######" -f Green
-    wsl -d $distro -u root /bin/bash -c "
-        apt update && apt upgrade -y;
-        apt install ansible git -y
-    "
+    wsl -d $distro -u root /bin/bash -c "apt update && apt upgrade -y; apt install ansible git -y"
+
     Write-Host "####### Setting Up Distro....... #######" -f Green
     setupUser 'sudo'
 }
