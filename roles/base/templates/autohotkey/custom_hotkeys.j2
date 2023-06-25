@@ -1,7 +1,30 @@
 #NoEnv
 #SingleInstance Force
+SetWorkingDir %A_ScriptDir%
+if not A_IsAdmin
+	Run *RunAs "%A_ScriptFullPath%"
 #Warn
 SendMode Input
+
+; Hibernate - Win+Shift+H
+#+H::
+DllCall("PowrProf\SetSuspendState", "int", 1, "int", 0, "int", 0)
+return
+
+; Sleep - Win+Shift+S
+#+S::
+DllCall("PowrProf\SetSuspendState", "int", 0, "int", 0, "int", 0)
+return
+
+; Reboot - Win+Shift+B
+#+B::
+Shutdown, 2
+return
+
+; Shutdown - Win+Shift+P
+#+P::
+Shutdown, 8
+return
 
 ; Open Chrome
 #C::
@@ -18,9 +41,9 @@ return
 Run, C:\Windows\explorer.exe
 return
 
-; Open Telegram
+; Open Kotatogram
 #T::
-Run, C:\Users\{{ custom_user }}\AppData\Roaming\Telegram Desktop\Telegram.exe
+Run, C:\Users\{{ custom_user }}\AppData\Roaming\Kotatogram Desktop\Kotatogram.exe
 return
 
 ; Open Windows Terminal
@@ -29,31 +52,17 @@ Run, C:\Users\{{ custom_user }}\AppData\Local\Microsoft\WindowsApps\wt.exe
 return
 
 ; Close Active Window
-$Escape::                                               ; Long press (> 0.5 sec) on Esc closes window - but if you change your mind you can keep it pressed for 3 more seconds
-    KeyWait, Escape, T0.5                               ; Wait no more than 0.5 sec for key release (also suppress auto-repeat)
-    If ErrorLevel                                       ; timeout, so key is still down...
-        {
-            KeyWait, Escape, T3                         ; Wait no more than 3 more sec for key to be released
-            If !ErrorLevel                              ; No timeout, so key was released
-                {
-                    PostMessage, 0x112, 0xF060,,, A     ; ...so close window
-                    Return
-                }
-                                                        ; Otherwise,
-            KeyWait, Escape                             ; Wait for button to be released
-                                                        ; Then do nothing...
-            Return
-        }
-    Send {Esc}
-Return
+#+W::
+PostMessage, 0x112, 0xF060,,, A     ; ...so close window
+return
 
 ; Move Window to Left Monitor
-#+J::
+<#+J::
 Send #+{Left}
 return
 
 ; Move Window to Right Monitor
-#+L::
+<#+L::
 Send #+{Right}
 return
 

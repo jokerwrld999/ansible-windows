@@ -22,19 +22,7 @@
     - { name: 'ShareX.ShareX', path: 'C:\Program Files\ShareX\ShareX.exe' }
     - { name: 'SlackTechnologies.Slack', path: '{{ home_dir }}\AppData\Local\slack\slack.exe' }
     - { name: 'Telegram.TelegramDesktop', path: '{{ home_dir }}\AppData\Roaming\Telegram Desktop\Telegram.exe' }
-    - { name: 'xanderfrangos.twinkletray', path: '{{ home_dir }}\AppData\Local\Programs\twinkle-tray\Twinkle Tray.exe' }
     - { name: 'VideoLAN.VLC', path: 'C:\Program Files\VideoLAN\VLC\vlc.exe' }
-
-- name: Software | DisplayFusion | Install choco
-  win_chocolatey:
-    name: displayfusion
-    version: '9.9'
-    state: present
-
-- name: Software | DisplayFusion | Restore a Backup
-  win_template:
-    src: display_fusion/DisplayFusion_Backup.j2
-    dest: '{{ home_dir }}\Documents\DisplayFusion Backups\DisplayFusion_Backup.reg'
 
 - name: Software | AutoHotKey | Create a Directory
   win_file:

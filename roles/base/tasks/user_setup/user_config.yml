@@ -1,13 +1,5 @@
 ---
 
-- name: User Configuration | Copy dotfiles
-  win_copy:
-    src: "{{ item.src }}"
-    dest: '{{ home_dir }}\{{ item.dest }}'
-    recurse: yes
-  with_items:
-    - { src: 'git/gitconfig', dest: '.gitconfig' }
-
 - name: User Configuration | Run PowerShell customization
   win_shell: irm 'https://github.com/jokerwrld999/ultimate-powershell/raw/main/setup.ps1' | iex
 

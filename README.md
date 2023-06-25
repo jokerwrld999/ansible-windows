@@ -10,19 +10,19 @@ This project aims to simplify the installation and configuration of essential so
 irm "https://raw.githubusercontent.com/jokerwrld999/ansible-windows/main/powershell/winrm/EnableWinRM.ps1" | iex
 ```
 
-## 2. To Disable WinRM:
+## 1.1 To Disable WinRM:
 
 ```
 irm "https://raw.githubusercontent.com/jokerwrld999/ansible-windows/main/powershell/winrm/DisableWinRM.ps1" | iex
 ```
 
-## 3. To Set Up WSL:
+## 2. To Set Up WSL2:
 
 ```
-irm "https://raw.githubusercontent.com/jokerwrld999/ansible-windows/main/powershell/wsl/SetupWSL.ps1" | iex
+irm "https://raw.githubusercontent.com/jokerwrld999/ultimate-powershell/main/wsl/SetupWSL.ps1" | iex
 ```
 
-## 4. To Set Up OpenSSH:
+## 3. To Set Up OpenSSH:
 
 ```
 irm "https://raw.githubusercontent.com/jokerwrld999/ansible-windows/main/powershell/openssh/SetupOpenSSH.ps1" | iex
